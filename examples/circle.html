@@ -1,22 +1,89 @@
 <html>
+    <style>
+         body{
+             display: inline;
+         }
+        .bg-red {
+            background-color: #C50C29;
+            padding: 15px;
+            width: 40%;
+            display: block;
+        }
+        .bg-blue {
+            background-color: rgba(15,121,243,0.25);
+            padding: 15px;
+            width: 40%;
+        }
+    </style>
 <body>
-    <div class="circleChart" id="0"></div>
-    <div class="circleChart" id="1" data-value="77"></div>
+    <div class="circleChart bg-red" id="0"></div>
+    <div class="circleChart bg-blue" id="1"></div>
     <script src="jquery.js"></script>
-    <script src="../dist/circleChart.min.js"></script>
+    <script src="../src/circleChart.js"></script>
     <script>
-        $(".circleChart#1").circleChart();
         $(".circleChart#0").circleChart({
-            size: 500,
-            value: 50,
-            text: 0,
-            onDraw: function(el, circle) {
+            // color of the circle line
+            color: "#ffffff",
+            backgroundColor: "#94000c",
+            widthRatio: 0.14,
+            size: 463,
+            value: 0.9,
+            targetOee: 0.5, //of 1 circle
+            relativeTextSize: 0.25,
+            producedPartCount: 74,
+            theoricalPartCount: 100,
+            /* defines the starting angle from which the 
+                circle line should be displayed
+                Examples: 50, 75, 43.1240
+            */
+            startAngle: 75,
+            textIn: true,
+            textSize: 128,
+            text: function(){ return this.theoricalPartCount + ` parts behind` },
+            /*onDraw: function(el, circle) {
                 circle.text(Math.round(circle.value) + "%");
-            }
+            }*/
         });
         setInterval(function() {
-            $("#0").circleChart({
-                value: Math.random() * 100
+            $(".circleChart#0").circleChart({
+                value: Math.random(),
+                // targetOee: Math.random(),
+                producedPartCount: Math.round( Math.random() * 100 )
+
+            });
+        }, 4000);
+
+        $(".circleChart#1").circleChart({
+            size: 261,
+            color: "#0F79F3",
+            backgroundColor: '#EAFAFF',
+            widthRatio: 0.11,
+            value: 0.9,
+            targetOee: 0.75, //of 1 circle
+            relativeTextSize: 0.25,
+            theoricalPartCount: 100,
+            text: function(){ return this.theoricalPartCount + ` parts behind` },
+            textColor : {
+                valueColor: '#0F79F3',
+                percentSymbolColor: '#0F79F3',
+                producedPartCountColor: '#000000',
+                partsTextColor : '#000000',
+                partsBehindTextColor: '#000000',
+            },
+            /* defines the starting angle from which the 
+                circle line should be displayed
+                Examples: 50, 75, 43.1240
+            */
+            startAngle: 75,
+            relativeTextSize: 0.25,
+            textIn: true,
+            /*onDraw: function(el, circle) {
+                circle.text(Math.round(circle.value) + "%");
+            }*/
+        });
+        setInterval(function() {
+            $(".circleChart#1").circleChart({
+                value: Math.random()
             });
         }, 4000);
     </script>

@@ -6,26 +6,42 @@
             backgroundColor: "#e6e6e6",
             background: true,
             speed: 2000,
-            widthRatio: 0.2,
-            value: 66,
+            widthRatio: 1,
+            // 0 - 1 
+            value: options.value ? options : 1,
+            previousValue: 0,
             unit: 'percent',
+            // represents the target 0 - 1
+            targetOee: 0.75,
+            producedPartCount: 0,
+            theoricalPartCount: 0,
+            textIn: false,
+            // 75 start from top
+            startAngle: 0,
             counterclockwise: false,
             size: 110,
-            startAngle: 0,
             animate: true,
             backgroundFix: true,
             lineCap: "round",
             animation: "easeInOutCubic",
-            text: false,
+            text: function(){ return false },
+            textColor : {
+                valueColor: '#ffffff',
+                percentSymbolColor: '#ffffff',
+                producedPartCountColor: '#ffffff',
+                partsTextColor : '#ffffff',
+                partsBehindTextColor: '#ffffff',
+            },
             redraw: false,
             cAngle: 0,
             textCenter: true,
             textSize: false,
             textWeight: 'normal',
-            textFamily: 'sans-serif',
+            textFamily: 'Roboto, Arial, sans-serif',
             relativeTextSize: 1 / 7,
             autoCss: true,
-            onDraw: false
+            onDraw: false,
+            
         };
 
         // Animation Math functions
@@ -153,15 +169,12 @@
             onDraw(el) {
                 if (this.settings.onDraw !== false) {
                     let copy = Object.assign({}, this);
-
                     let units = {
                         'percent': rToP,
                         'rad': (e) => e,
                         'default': rToD
                     };
-
                     copy.value = (units[this.settings.unit] || units['default'])(copy.cAngle);
-
                     copy.text = (text) => setCircleText(el, text);
                     copy.settings.onDraw(el, copy);
                 }
@@ -189,6 +202,23 @@
                 ctx.lineCap = this.settings.lineCap;
                 ctx.strokeStyle = this.settings.color;
                 ctx.stroke();
+               
+            },
+            drawTarget(ctx){
+                // draw target
+                ctx.beginPath();
+                let lineWidth = this.settings.backgroundFix
+                    ? this.lineWidth * 0.95 / 2 
+                    : this.lineWidth / 2;
+                let x =  this.pos + this.radius * Math.cos(Math.PI/180 * ( (this.settings.targetOee * 360) - 90) );
+                let y =  this.pos + this.radius * Math.sin(Math.PI/180 * ( (this.settings.targetOee * 360) - 90) );
+                let startAngle = 0 * Math.PI;
+                let endAngle = 2 * Math.PI;
+                ctx.arc(x, y, lineWidth, startAngle, endAngle );
+                let color = this.settings.value >= this.settings.targetOee ? this.settings.backgroundColor : "#ffffff";
+                ctx.fillStyle = color;
+                ctx.fill(); 
+                // update text
             },
             animate(el, ctx, time, startTime, move/*move counterclockwise*/) {
                 let mspf = new Date().getTime() - time; //milliseconds per frame
@@ -202,17 +232,21 @@
                         this.drawBackground(ctx);
                     }
                     this.draw(ctx);
+                    this.drawTarget(ctx);
                     this.onDraw(el);
                     time = new Date().getTime();
                     rAF(() => this.animate(el, ctx, time, startTime, move));
                 } else {
+
                     this.cAngle = this.eAngle;
                     ctx.clearRect(0, 0, this.settings.size, this.settings.size);
                     if (this.settings.background) {
                         this.drawBackground(ctx);
                     }
                     this.draw(ctx);
+                    this.drawTarget(ctx);
                     this.setCurrentAnglesData(el);
+                    this.drawTarget(ctx);
                 }
             },
             setCurrentAnglesData(el) {
@@ -295,36 +329,88 @@
                 scaleCanvas($("canvas", el).get(0));
             }
             if (!$("p.circleChart_text", el).length) {
-                if (settings.text !== false) {
-                    el.append("<p class='circleChart_text'>" + settings.text + "</p>");
+                let target_parts_goal = '';
+                try{
+                    target_parts_goal = settings.text();
+                }catch(e){
+                    throw Error('You have to set theoricalPartCount');
+                }
+
+                if (settings.textIn) {
+                    el.append("<p class='circleChart_text'>"
+                    + "<span class='circleChart_value'>" + Math.round( (settings.value * 100 / settings.targetOee) )  + "<sup class='unit_percent'>%</sup></span>"
+                    + "<span class='circleChart_part_count'>" + settings.producedPartCount + "</span>"
+                    + "<span class='circleChart_part_text'>PARTS</span></p>"
+                    + "<p class='circleChart-text-behind'>" + settings.text() + "</p>");
                     if (settings.autoCss) {
                         if (settings.textCenter) {
                             $("p.circleChart_text", el).css({
+                                "display": "block",
                                 "position": "absolute",
-                                "line-height": (settings.size + "px"),
                                 "top": 0,
-                                "width": "100%",
-                                "margin": 0,
-                                "padding": 0,
+                                "left": 0,
                                 "text-align": "center",
+                                "width": "100%" ,
+                                "margin-top": (settings.size/5 + "px"),
+                                "padding": 0,
+                                "vertical-align": "middle",
+                                "font-family": settings.textFamily
+                            });
+                            $("span.circleChart_value", el).css({
+                                "display": "block",
+                                "width": "100%",
+                                //"line-height": (settings.size/1.5 + "px"),
+                                "font-weight": "bold",
+                                "color" : settings.textColor.valueColor,
                                 "font-size": settings.textSize !== false
                                     ? settings.textSize
                                     : settings.size * settings.relativeTextSize,
-                                "font-weight": settings.textWeight,
-                                "font-family": settings.textFamily
+                                // "font-weight": settings.textWeight,
                             });
-                        } else {
-                            $("p.circleChart_text", el).css({
-                                "padding-top": "5px",
+                            $("sup.unit_percent", el).css({
+                                "color" : settings.textColor.percentSymbolColor,
+                                "font-size": "56px",
+                                "line-height": "56px",
                                 "text-align": "center",
-                                "font-weight": settings.textWeight,
-                                "font-family": settings.textFamily,
-                                "font-size": settings.textSize !== false
-                                    ? settings.textSize
-                                    : settings.size * settings.relativeTextSize
+                                "width": "42px"
                             });
+                            $("span.circleChart_part_count", el).css({
+                                "color" : settings.textColor.producedPartCountColor,
+                                "line-height": "115px",
+                                "display": "block",
+                                "width": "100%",
+                                "font-size": "96px",
+                                "font-weight": "bold",
+                                "text-align": "center"
+                            });
+                            $("span.circleChart_part_text", el).css({
+                                "color" : settings.textColor.partsTextColor,
+                                'text-align': 'center',
+                                'display': 'block',
+                                'width': '100%',
+                                'font-size': '32px',
+                                'font-weight': 'lighter',	
+                                'line-height': '38px'
+                            });
+                            $("p.circleChart-text-behind", el).css({
+                                "color" : settings.textColor.partsBehindTextColor,
+                                'height': '28px',
+                                'font-size': '24px',	
+                                'font-weight': 'bold',
+                                'line-height': '28px',
+                                'text-align': 'center'
+                            });
+                            
                         }
                     }
+                }
+            } else {
+                if(settings.textIn){
+                    $('.circleChart_part_count', el).text(settings.producedPartCount);
+                    $('.circleChart_value', el).contents()
+                    .filter(function(){ return this.nodeType == 3; })
+                    .first()
+                    .replaceWith(Math.round( (settings.value * 100 / settings.targetOee) ));
                 }
             }
 
@@ -351,9 +437,8 @@
             };
 
             let f = (units[settings.unit] || units['default']);
-
             let bAngle = f(settings.startAngle);
-            let eAngle = f(settings.value);
+            let eAngle = f(settings.value * 100);
             let cAngle = f(settings.cAngle);
 
             let pos = settings.size / 2;
@@ -370,6 +455,7 @@
                     }
                     if (settings.value !== 0) {
                         circle.draw(ctx);
+                        circle.drawTarget(ctx);
                         circle.setCurrentAnglesData(el);
                     } else {
                         if (circle.settings.background) {
