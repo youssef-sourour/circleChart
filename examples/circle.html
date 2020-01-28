@@ -6,13 +6,12 @@
         .bg-red {
             background-color: #C50C29;
             padding: 15px;
-            width: 40%;
             display: block;
         }
         .bg-blue {
             background-color: rgba(15,121,243,0.25);
             padding: 15px;
-            width: 40%;
+
         }
     </style>
 <body>
@@ -22,13 +21,12 @@
     <script src="../src/circleChart.js"></script>
     <script>
         $(".circleChart#0").circleChart({
-            // color of the circle line
+            size: 463, //463
             color: "#ffffff",
             backgroundColor: "#94000c",
             widthRatio: 0.14,
-            size: 463,
             value: 0.9,
-            targetOee: 0.5, //of 1 circle
+            targetOee: 0.75, //of 1 circle
             relativeTextSize: 0.25,
             producedPartCount: 74,
             theoricalPartCount: 100,
@@ -38,7 +36,6 @@
             */
             startAngle: 75,
             textIn: true,
-            textSize: 128,
             text: function(){ return this.theoricalPartCount + ` parts behind` },
             /*onDraw: function(el, circle) {
                 circle.text(Math.round(circle.value) + "%");
@@ -57,10 +54,11 @@
             size: 261,
             color: "#0F79F3",
             backgroundColor: '#EAFAFF',
-            widthRatio: 0.11,
+            widthRatio: 0.13,
             value: 0.9,
             targetOee: 0.75, //of 1 circle
             relativeTextSize: 0.25,
+            producedPartCount: 95,
             theoricalPartCount: 100,
             text: function(){ return this.theoricalPartCount + ` parts behind` },
             textColor : {
@@ -75,7 +73,6 @@
                 Examples: 50, 75, 43.1240
             */
             startAngle: 75,
-            relativeTextSize: 0.25,
             textIn: true,
             /*onDraw: function(el, circle) {
                 circle.text(Math.round(circle.value) + "%");

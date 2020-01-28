@@ -1,9 +1,9 @@
 (function ($) {
-    "use strict";
+    'use strict';
     $.fn.circleChart = function (options) {
         const defaults = {
-            color: "#3459eb",
-            backgroundColor: "#e6e6e6",
+            color: '#3459eb',
+            backgroundColor: '#e6e6e6',
             background: true,
             speed: 2000,
             widthRatio: 1,
@@ -22,8 +22,8 @@
             size: 110,
             animate: true,
             backgroundFix: true,
-            lineCap: "round",
-            animation: "easeInOutCubic",
+            lineCap: 'round',
+            animation: 'easeInOutCubic',
             text: function(){ return false },
             textColor : {
                 valueColor: '#ffffff',
@@ -215,7 +215,7 @@
                 let startAngle = 0 * Math.PI;
                 let endAngle = 2 * Math.PI;
                 ctx.arc(x, y, lineWidth, startAngle, endAngle );
-                let color = this.settings.value >= this.settings.targetOee ? this.settings.backgroundColor : "#ffffff";
+                let color = this.settings.value >= this.settings.targetOee ? this.settings.backgroundColor : '#ffffff';
                 ctx.fillStyle = color;
                 ctx.fill(); 
                 // update text
@@ -258,18 +258,18 @@
 
                 let f = (units[this.settings.unit] || units['default']);
 
-                el.data("current-c-angle", f(this.cAngle));
-                el.data("current-start-angle", f(this.bAngle));
+                el.data('current-c-angle', f(this.cAngle));
+                el.data('current-start-angle', f(this.bAngle));
             }
         };
 
         let setCircleText = (el, text) => {
-            el.data("text", text);
-            $(".circleChart_text", el).html(text);
+            el.data('text', text);
+            $('.circleChart_text', el).html(text);
         };
 
         let scaleCanvas = (c) => {
-            let ctx = c.getContext("2d");
+            let ctx = c.getContext('2d');
             let dpr = window.devicePixelRatio || 1;
             let bsr = ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
 
@@ -313,22 +313,22 @@
                 if (settings.hasOwnProperty(key) && key.indexOf('_cache_') !== 0)
                     el.data('_cache_' + key, settings[key]);
             }
-            if (!$("canvas.circleChart_canvas", el).length) {
+            if (!$('canvas.circleChart_canvas', el).length) {
                 el.append(function () {
                     return $('<canvas/>', {'class': 'circleChart_canvas'}).prop({
                         width: settings.size,
                         height: settings.size
                     }).css(settings.autoCss
                         ? {
-                            "margin-left": "auto",
-                            "margin-right": "auto",
-                            "display": "block"
+                            'margin-left': 'auto',
+                            'margin-right': 'auto',
+                            'display': 'block'
                         }
                         : {});
                 });
-                scaleCanvas($("canvas", el).get(0));
+                scaleCanvas($('canvas', el).get(0));
             }
-            if (!$("p.circleChart_text", el).length) {
+            if (!$('p.circleChart_text', el).length) {
                 let target_parts_goal = '';
                 try{
                     target_parts_goal = settings.text();
@@ -337,68 +337,69 @@
                 }
 
                 if (settings.textIn) {
-                    el.append("<p class='circleChart_text'>"
-                    + "<span class='circleChart_value'>" + Math.round( (settings.value * 100 / settings.targetOee) )  + "<sup class='unit_percent'>%</sup></span>"
-                    + "<span class='circleChart_part_count'>" + settings.producedPartCount + "</span>"
-                    + "<span class='circleChart_part_text'>PARTS</span></p>"
-                    + "<p class='circleChart-text-behind'>" + settings.text() + "</p>");
+                    console.log('here');
+                    el.append(`<p class='circleChart_text'>`
+                    + `<span class='circleChart_value'> ${ Math.round( (settings.value * 100 / settings.targetOee) )} <sup class='unit_percent'>%</sup></span>`
+                    + `<span class='circleChart_part_count'> ${ settings.producedPartCount } </span>`
+                    + `<span class='circleChart_part_text'>PARTS</span>`
+                    + `<p class='circleChart-text-behind'> ${settings.text()} </p>`);
                     if (settings.autoCss) {
                         if (settings.textCenter) {
-                            $("p.circleChart_text", el).css({
-                                "display": "block",
-                                "position": "absolute",
-                                "top": 0,
-                                "left": 0,
-                                "text-align": "center",
-                                "width": "100%" ,
-                                "margin-top": (settings.size/5 + "px"),
-                                "padding": 0,
-                                "vertical-align": "middle",
-                                "font-family": settings.textFamily
+                            $('p.circleChart_text', el).css({
+                                'display': 'block',
+                                'position': 'absolute',
+                                'top': 0,
+                                'left': 0,
+                                'text-align': 'center',
+                                'width': '100%' ,
+                                'padding': 0,
+                                'vertical-align': 'middle',
+                                'font-family': settings.textFamily
                             });
-                            $("span.circleChart_value", el).css({
-                                "display": "block",
-                                "width": "100%",
-                                //"line-height": (settings.size/1.5 + "px"),
-                                "font-weight": "bold",
-                                "color" : settings.textColor.valueColor,
-                                "font-size": settings.textSize !== false
-                                    ? settings.textSize
-                                    : settings.size * settings.relativeTextSize,
-                                // "font-weight": settings.textWeight,
+                            $('span.circleChart_value', el).css({
+                                'display': 'block',
+                                'width': '100%',
+                                'line-height':`${settings.size / 3.625}px`, //72 px see Augusto wireframe
+                                'font-size': `${settings.size / 3.625}px`, //72 px see Augusto wireframe
+                                'margin-top': `${settings.size / 3.625 / 2}px`, //72 px see Augusto wireframe
+                                'font-weight': 'bold',
+                                'color' : settings.textColor.valueColor,
+                                
                             });
-                            $("sup.unit_percent", el).css({
-                                "color" : settings.textColor.percentSymbolColor,
-                                "font-size": "56px",
-                                "line-height": "56px",
-                                "text-align": "center",
-                                "width": "42px"
+                            $('sup.unit_percent', el).css({
+                                'color' : settings.textColor.percentSymbolColor,
+                                'text-align': 'center',
+                                'width': '42px',
+                                'font-size':'0.44em' // (32/72)px see Augusto wireframe
                             });
-                            $("span.circleChart_part_count", el).css({
-                                "color" : settings.textColor.producedPartCountColor,
-                                "line-height": "115px",
-                                "display": "block",
-                                "width": "100%",
-                                "font-size": "96px",
-                                "font-weight": "bold",
-                                "text-align": "center"
+                            // 
+                            $('span.circleChart_part_count', el).css({
+                                'line-height':`${settings.size / 4.66}px`, //56 px see Augusto wireframe
+                                'font-size': `${settings.size / 4.66}px`, //56 px see Augusto wireframe
+                                'margin-top': `${settings.size / 4.66 / 6}px`, 
+                                'color' : settings.textColor.producedPartCountColor,
+                                'display': 'block',
+                                'width': '100%',
+                                'font-weight': 'bold',
+                                'text-align': 'center',
                             });
-                            $("span.circleChart_part_text", el).css({
-                                "color" : settings.textColor.partsTextColor,
+                            $('span.circleChart_part_text', el).css({
+                                'color' : settings.textColor.partsTextColor,
+                                'line-height':`${settings.size / 13.05}px`, //56 px see Augusto wireframe
+                                'font-size': `${settings.size / 13.05}px`, //56 px see Augusto wireframe
+                                'margin-top': `${settings.size / 13.05 / 2}px`, 
                                 'text-align': 'center',
                                 'display': 'block',
                                 'width': '100%',
-                                'font-size': '32px',
                                 'font-weight': 'lighter',	
-                                'line-height': '38px'
                             });
-                            $("p.circleChart-text-behind", el).css({
-                                "color" : settings.textColor.partsBehindTextColor,
-                                'height': '28px',
-                                'font-size': '24px',	
+                            $('p.circleChart-text-behind', el).css({
+                                'line-height':`${settings.size / 16.31}px`, //56 px see Augusto wireframe
+                                'font-size': `${settings.size / 18.64}px`, //56 px see Augusto wireframe
+                                'color' : settings.textColor.partsBehindTextColor,
+                                'height': '28px',	
+                                'text-align': 'center',
                                 'font-weight': 'bold',
-                                'line-height': '28px',
-                                'text-align': 'center'
                             });
                             
                         }
@@ -415,7 +416,7 @@
             }
 
             if (settings.autoCss) {
-                el.css("position", "relative");
+                el.css('position', 'relative');
             }
 
             if (!settings.redraw) {
@@ -427,8 +428,8 @@
                     : settings.startAngle;
             }
 
-            let c = $("canvas", el).get(0);
-            let ctx = c.getContext("2d");
+            let c = $('canvas', el).get(0);
+            let ctx = c.getContext('2d');
 
             let units = {
                 'percent': pToR,
@@ -445,7 +446,7 @@
             let radius = pos * (1 - settings.widthRatio / 2);
             let lineWidth = radius * settings.widthRatio;
             let circle = Circle(pos, bAngle, eAngle, cAngle, radius, lineWidth, cAngle, settings);
-            el.data("size", settings.size);
+            el.data('size', settings.size);
             if (!settings.animate) {
                 circle.cAngle = circle.eAngle;
                 rAF(() => {
