@@ -360,7 +360,7 @@
                                 'width': '100%',
                                 'line-height':`${settings.size / 3.625}px`, //72 px see Augusto wireframe
                                 'font-size': `${settings.size / 3.625}px`, //72 px see Augusto wireframe
-                                'margin-top': `${settings.size / 3.625 / 2}px`, //72 px see Augusto wireframe
+                                'margin-top': `${settings.size / 3.625 / 1.5}px`, //72 px see Augusto wireframe
                                 'font-weight': 'bold',
                                 'color' : settings.textColor.valueColor,
                                 
