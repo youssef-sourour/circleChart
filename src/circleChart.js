@@ -337,7 +337,6 @@
                 }
 
                 if (settings.textIn) {
-                    console.log('here');
                     el.append(`<p class='circleChart_text'>`
                     + `<span class='circleChart_value'> ${ Math.round( (settings.value * 100 / settings.targetOee) )} <sup class='unit_percent'>%</sup></span>`
                     + `<span class='circleChart_part_count'> ${ settings.producedPartCount } </span>`
@@ -394,8 +393,8 @@
                                 'font-weight': 'lighter',	
                             });
                             $('p.circleChart-text-behind', el).css({
-                                'line-height':`${settings.size / 16.31}px`, //56 px see Augusto wireframe
                                 'font-size': `${settings.size / 18.64}px`, //56 px see Augusto wireframe
+                                'margin-top': `${settings.size / 16.31}px`, 
                                 'color' : settings.textColor.partsBehindTextColor,
                                 'height': '28px',	
                                 'text-align': 'center',
