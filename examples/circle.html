@@ -29,6 +29,7 @@
             targetOee: 0.75, //of 1 circle
             relativeTextSize: 0.25,
             producedPartCount: 74,
+            circleTextIn: 'Parts__',
             theoricalPartCount: 100,
             /* defines the starting angle from which the 
                 circle line should be displayed
@@ -36,7 +37,11 @@
             */
             startAngle: 75,
             textIn: true,
-            text: function(){ return this.theoricalPartCount + ` parts behind` },
+            textBottom: `text goes here`,
+            targetColor: {
+                normal : 'green',
+                over: 'yellow'
+            },
             /*onDraw: function(el, circle) {
                 circle.text(Math.round(circle.value) + "%");
             }*/
@@ -44,6 +49,7 @@
         setInterval(function() {
             $(".circleChart#0").circleChart({
                 value: Math.random(),
+                textBottom: `text goes here ${Math.random()}`,
                 // targetOee: Math.random(),
                 producedPartCount: Math.round( Math.random() * 100 )
 
@@ -58,9 +64,9 @@
             value: 0.9,
             targetOee: 0.75, //of 1 circle
             relativeTextSize: 0.25,
-            producedPartCount: 95,
-            theoricalPartCount: 100,
-            text: function(){ return this.theoricalPartCount + ` parts behind` },
+            //producedPartCount: 95,
+            //theoricalPartCount: 100,
+            circleTextIn: "perfotmance",
             textColor : {
                 valueColor: '#0F79F3',
                 percentSymbolColor: '#0F79F3',
@@ -83,6 +89,8 @@
                 value: Math.random()
             });
         }, 4000);
+
+       
     </script>
 </body>
 </html>

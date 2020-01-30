@@ -13,7 +13,8 @@
             unit: 'percent',
             // represents the target 0 - 1
             targetOee: 0.75,
-            producedPartCount: 0,
+            producedPartCount: false,
+            circleTextIn: '',
             theoricalPartCount: 0,
             textIn: false,
             // 75 start from top
@@ -25,6 +26,11 @@
             lineCap: 'round',
             animation: 'easeInOutCubic',
             text: function(){ return false },
+            textBottom: '',
+            targetColor: {
+                normal : '#FFFFFF',
+                over: 'red'
+            },
             textColor : {
                 valueColor: '#ffffff',
                 percentSymbolColor: '#ffffff',
@@ -215,7 +221,7 @@
                 let startAngle = 0 * Math.PI;
                 let endAngle = 2 * Math.PI;
                 ctx.arc(x, y, lineWidth, startAngle, endAngle );
-                let color = this.settings.value >= this.settings.targetOee ? this.settings.backgroundColor : '#ffffff';
+                let color = this.settings.value >= this.settings.targetOee ? this.settings.targetColor.over : this.settings.targetColor.normal;
                 ctx.fillStyle = color;
                 ctx.fill(); 
                 // update text
@@ -328,7 +334,9 @@
                 });
                 scaleCanvas($('canvas', el).get(0));
             }
+
             if (!$('p.circleChart_text', el).length) {
+            //already exists
                 let target_parts_goal = '';
                 try{
                     target_parts_goal = settings.text();
@@ -337,11 +345,15 @@
                 }
 
                 if (settings.textIn) {
-                    el.append(`<p class='circleChart_text'>`
-                    + `<span class='circleChart_value'> ${ Math.round( (settings.value * 100 / settings.targetOee) )} <sup class='unit_percent'>%</sup></span>`
-                    + `<span class='circleChart_part_count'> ${ settings.producedPartCount } </span>`
-                    + `<span class='circleChart_part_text'>PARTS</span>`
-                    + `<p class='circleChart-text-behind'> ${settings.text()} </p>`);
+                    let content = `<p class='circleChart_text'>`;
+                    content += `<span class='circleChart_value'> ${ Math.round( (settings.value * 100 / settings.targetOee) )} <sup class='unit_percent'>%</sup></span>`;
+                    if(typeof settings.producedPartCount !== 'boolean'){
+                        content += `<span class='circleChart_part_count'> ${ settings.producedPartCount } </span>`;
+                    }
+                    content += `<span class='circleChart_part_text'> ${ settings.circleTextIn } </span>`;
+                    content += `<p class='circleChart_bottom_text'> ${settings.textBottom} </p>`;
+                    content += `</p>`
+                    el.append(`${content}`);
                     if (settings.autoCss) {
                         if (settings.textCenter) {
                             $('p.circleChart_text', el).css({
@@ -355,12 +367,17 @@
                                 'vertical-align': 'middle',
                                 'font-family': settings.textFamily
                             });
+                            let value_margin_top = `${settings.size / 3.625 }px`;
+                            if(typeof settings.producedPartCount !== 'boolean'){
+                                value_margin_top = `${settings.size / 3.625 / 1.5}px`;
+                                
+                            }
                             $('span.circleChart_value', el).css({
                                 'display': 'block',
                                 'width': '100%',
                                 'line-height':`${settings.size / 3.625}px`, //72 px see Augusto wireframe
                                 'font-size': `${settings.size / 3.625}px`, //72 px see Augusto wireframe
-                                'margin-top': `${settings.size / 3.625 / 1.5}px`, //72 px see Augusto wireframe
+                                'margin-top': value_margin_top, //72 px see Augusto wireframe
                                 'font-weight': 'bold',
                                 'color' : settings.textColor.valueColor,
                                 
@@ -392,21 +409,26 @@
                                 'width': '100%',
                                 'font-weight': 'lighter',	
                             });
-                            $('p.circleChart-text-behind', el).css({
-                                'font-size': `${settings.size / 18.64}px`, //56 px see Augusto wireframe
-                                'margin-top': `${settings.size / 16.31}px`, 
-                                'color' : settings.textColor.partsBehindTextColor,
-                                'height': '28px',	
-                                'text-align': 'center',
-                                'font-weight': 'bold',
-                            });
+                            if(settings.textBottom !== ''){
+                                $('p.circleChart_bottom_text', el).css({
+                                    'font-size': `${settings.size / 18.64}px`, //56 px see Augusto wireframe
+                                    'margin-top': `${settings.size / 16.31}px`, 
+                                    'color' : settings.textColor.partsBehindTextColor,
+                                    'height': '28px',	
+                                    'text-align': 'center',
+                                    'font-weight': 'bold',
+                                });
+                            }
+                            
                             
                         }
                     }
                 }
             } else {
+            //update 
                 if(settings.textIn){
                     $('.circleChart_part_count', el).text(settings.producedPartCount);
+                    $('.circleChart_bottom_text', el).text(settings.textBottom);
                     $('.circleChart_value', el).contents()
                     .filter(function(){ return this.nodeType == 3; })
                     .first()
